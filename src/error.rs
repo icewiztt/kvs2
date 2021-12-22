@@ -5,7 +5,7 @@ use std::error;
 pub enum TError{
     IO(std::io::Error),
     Bincode(bincode::Error),
-    RemoveNonExistentKey,
+    NonExistentKey,
     FaultyCommandInLog,
 }
 
@@ -16,8 +16,8 @@ impl fmt::Display for TError {
                 write!(f, "Error in IO: {}", e),
             TError::Bincode(e) =>
                 write!(f, "Error in bincode crate: {}", e),
-            TError::RemoveNonExistentKey => 
-                write!(f, "Error: Attempted removing a non-existent key"),
+            TError::NonExistentKey => 
+                write!(f, "Key not found"),
             TError::FaultyCommandInLog =>
                 write!(f, "Error reading log file"),
         }
@@ -29,7 +29,7 @@ impl error::Error for TError {
         match *self {
             TError::IO(ref e) => Some(e),
             TError::Bincode(ref e) => Some(e),
-            TError::RemoveNonExistentKey => None,
+            TError::NonExistentKey => None,
             TError::FaultyCommandInLog => None,
         }
     }
