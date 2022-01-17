@@ -4,7 +4,7 @@ use std::error;
 #[derive(Debug)]
 pub enum TError{
     IO(std::io::Error),
-    Bincode(bincode::Error),
+    Serde(serde_json::Error),
     NonExistentKey,
     FaultyCommandInLog,
 }
@@ -14,7 +14,7 @@ impl fmt::Display for TError {
         match self {
             TError::IO(e) =>
                 write!(f, "Error in IO: {}", e),
-            TError::Bincode(e) =>
+            TError::Serde(e) =>
                 write!(f, "Error in bincode crate: {}", e),
             TError::NonExistentKey => 
                 write!(f, "Key not found"),
@@ -28,7 +28,7 @@ impl error::Error for TError {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
         match *self {
             TError::IO(ref e) => Some(e),
-            TError::Bincode(ref e) => Some(e),
+            TError::Serde(ref e) => Some(e),
             TError::NonExistentKey => None,
             TError::FaultyCommandInLog => None,
         }
@@ -41,9 +41,9 @@ impl From<std::io::Error> for TError {
     }
 }
 
-impl From<bincode::Error> for TError {
-    fn from(err : bincode::Error) -> TError {
-        TError::Bincode(err)
+impl From<serde_json::Error> for TError {
+    fn from(err : serde_json::Error) -> TError {
+        TError::Serde(err)
     }
 }
 
